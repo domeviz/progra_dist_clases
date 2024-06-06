@@ -40,6 +40,43 @@ public class PrincipalP {
         return persona;
     }
 
+    static Persona insertarPersona(Request req, Response rsp) {
+        rsp.type("application/json");
+
+        String jsonPersona = req.body();
+        Persona persona = new Gson().fromJson(jsonPersona, Persona.class);
+
+        IServicioPersona servicio = container.select(IServicioPersona.class).get();
+        Persona insertPersona = servicio.insertar(persona);
+
+        if (insertPersona == null) {
+            halt(400, "Error al insertar persona");
+        }
+
+        return insertPersona;
+    }
+
+    static Persona actualizarPersona(Request req, Response rsp) {
+        rsp.type("application/json");
+        String jsonPersona = req.body();
+        Persona persona = new Gson().fromJson(jsonPersona, Persona.class);
+
+        IServicioPersona servicio = container.select(IServicioPersona.class).get();
+        Persona actualizaPersona = servicio.actualizar(persona);
+
+        return actualizaPersona;
+    }
+
+    static Persona eliminarPersona(Request req, Response rsp) {
+        rsp.type("application/json");
+        String _id=req.params(":id");
+
+        var servicio=container.select(IServicioPersona.class).get();
+        Persona persona=servicio.eliminar(Integer.valueOf(_id));
+
+        return persona;
+
+    }
 
     public static void main(String[] args) {
         //Iniciar contenedor
@@ -56,5 +93,8 @@ public class PrincipalP {
 
         get("/personas", PrincipalP::listarPersonas,gson::toJson);
         get("/personas/:id", PrincipalP::buscarPersona,gson::toJson);
+        post("/personas", PrincipalP::insertarPersona,gson::toJson);
+        put("/personas", PrincipalP::actualizarPersona,gson::toJson);
+        delete("/personas/:id", PrincipalP::eliminarPersona);
     }
 }

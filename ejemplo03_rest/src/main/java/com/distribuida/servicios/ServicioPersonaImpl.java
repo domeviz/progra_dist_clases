@@ -22,4 +22,22 @@ public class ServicioPersonaImpl implements IServicioPersona{
     public List<Persona> buscarPersonas() {
         return em.createQuery("select p from Persona p order by id asc", Persona.class).getResultList();
     }
+
+    @Override
+    public Persona insertar(Persona persona) {
+        em.persist(persona);
+        return persona;
+    }
+
+    @Override
+    public Persona actualizar(Persona persona) {
+        em.merge(persona);
+        return persona;
+    }
+
+    @Override
+    public Persona eliminar(Integer id) {
+        em.remove(em.find(Persona.class, id));
+        return null;
+    }
 }
